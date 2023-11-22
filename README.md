@@ -26,3 +26,6 @@ git clone https://github.com/SUNNY11286/Maskvariate.git
 
 We utilized high-quality multi-modal MRI scans from the [BraTs 2016](https://www.smir.ch/BRATS/Start2016) and [BraTs 2017](https://www.med.upenn.edu/sbia/brats2017/data.html) datasets, including 274 and 285 patients, respectively. Emphasizing the FLAIR modality, our dataset encompasses diverse tumor shapes, sizes, and locations. Additionally, to assess the generalizability of our approach, we integrated the [AbdomenCT-1K](https://github.com/JunMa11/AbdomenCT-1K) dataset, comprising over a thousand abdominal CT scans, into our study.
 
+## Contributors
+Charulkumar Chodvadiya, Navyansh Mahla, Dr Kshitij Jadhav
+
