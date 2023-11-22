@@ -19,8 +19,8 @@ Clone the repository and install the dependencies:
 
 ```bash
 git clone https://github.com/SUNNY11286/Maskvariate.git
-** install all compatible version of other libraries with given prereuisites
 ```
+** install all compatible version of other libraries with given prereuisites
 
 ## Datasets
 
