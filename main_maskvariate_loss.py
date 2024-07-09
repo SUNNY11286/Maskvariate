@@ -157,7 +157,6 @@ def contrastive_loss(z_prev,z_present,margin = 0.2, lr=1e-3):
      #srv = tf.math.l2_normalize(srv)
      srv = tf.math.log(srv)
     #  print('srv:',srv)
-    #  print('loss/srv:',loss/srv)
     #  print('/////////////////////////////////////')
      return srv/loss, lr
 
