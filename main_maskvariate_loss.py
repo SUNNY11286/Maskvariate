@@ -312,61 +312,61 @@ class UNET3D(tf.keras.Model):
 
 unet_s = UNET3D(1)
 
-class UNET3DClients(tf.keras.Model):
-    def __init__(self,classes):
-        super(UNET3DClients,self).__init__()
-        self.classes = classes
+# class UNET3DClients(tf.keras.Model):
+#     def __init__(self,classes):
+#         super(UNET3DClients,self).__init__()
+#         self.classes = classes
 
-    #helper functions
-    def conv3D(self,x,
-               filters,
-               filter_size,
-               activation = 'relu',name = None):
-        out = tf.keras.layers.Conv3D(filters,(filter_size,filter_size,filter_size),padding = "same",name =name,use_bias = True)(x)
-        batch_norm_ = tf.keras.layers.BatchNormalization()(out)
-        conv_batch_norm_act = tf.keras.layers.Activation('relu')(batch_norm_)
-        return out
+#     #helper functions
+#     def conv3D(self,x,
+#                filters,
+#                filter_size,
+#                activation = 'relu',name = None):
+#         out = tf.keras.layers.Conv3D(filters,(filter_size,filter_size,filter_size),padding = "same",name =name,use_bias = True)(x)
+#         batch_norm_ = tf.keras.layers.BatchNormalization()(out)
+#         conv_batch_norm_act = tf.keras.layers.Activation('relu')(batch_norm_)
+#         return out
 
-    def upsampling3D(self,x,
-                     filters,
-                     filter_size,
-                     stride =2,
-                     activation = 'relu'):
-        up_out = tf.keras.layers.Conv3DTranspose(filters,(filter_size,filter_size,filter_size),strides = (stride,stride,stride),padding = 'same')(x)
-        batch_norm_ = tf.keras.layers.BatchNormalization()(up_out)
-        return batch_norm_
+#     def upsampling3D(self,x,
+#                      filters,
+#                      filter_size,
+#                      stride =2,
+#                      activation = 'relu'):
+#         up_out = tf.keras.layers.Conv3DTranspose(filters,(filter_size,filter_size,filter_size),strides = (stride,stride,stride),padding = 'same')(x)
+#         batch_norm_ = tf.keras.layers.BatchNormalization()(up_out)
+#         return batch_norm_
 
-    def concatenate(self,x1,x2):
-        concat = tf.keras.layers.concatenate([x1,x2])
-        return concat
+#     def concatenate(self,x1,x2):
+#         concat = tf.keras.layers.concatenate([x1,x2])
+#         return concat
 
-    def max_pool3D(self, x, filter_size,stride, name = None):
-        out = tf.keras.layers.MaxPooling3D((filter_size,filter_size,filter_size),strides = stride, name = name)(x)
-        return out
+#     def max_pool3D(self, x, filter_size,stride, name = None):
+#         out = tf.keras.layers.MaxPooling3D((filter_size,filter_size,filter_size),strides = stride, name = name)(x)
+#         return out
 
-    def downconv(self,x,filters,name = None):
-        s1 = self.conv3D(x,filters,3, name =name )
-        s2 = self.conv3D(s1,filters,3, name = name + "0")
-        return s2
+#     def downconv(self,x,filters,name = None):
+#         s1 = self.conv3D(x,filters,3, name =name )
+#         s2 = self.conv3D(s1,filters,3, name = name + "0")
+#         return s2
 
-    def call(self):
-        #input
-        # inputse = tf.keras.layers.Input(shape = (128,128,128,1))
-        inputse = tf.keras.layers.Input(shape = (64,64,64,1))
-        #encoder
-        d1e = self.downconv(inputse,32, name = "layer1")
-        m1e = self.max_pool3D(d1e,filter_size = 2,stride = 2)
-        d2e = self.downconv(m1e,64,  name = "layer2")
-        m2e = self.max_pool3D(d2e,filter_size = 2,stride = 2)
-        d3e = self.downconv(m2e,128, name = "layer3")
-        m3e = self.max_pool3D(d3e,filter_size = 2,stride = 2)
-        d4e = self.downconv(m3e,256, name = "layer4")
-        m4e = self.max_pool3D(d4e,filter_size =2,stride=2)
+#     def call(self):
+#         #input
+#         # inputse = tf.keras.layers.Input(shape = (128,128,128,1))
+#         inputse = tf.keras.layers.Input(shape = (64,64,64,1))
+#         #encoder
+#         d1e = self.downconv(inputse,32, name = "layer1")
+#         m1e = self.max_pool3D(d1e,filter_size = 2,stride = 2)
+#         d2e = self.downconv(m1e,64,  name = "layer2")
+#         m2e = self.max_pool3D(d2e,filter_size = 2,stride = 2)
+#         d3e = self.downconv(m2e,128, name = "layer3")
+#         m3e = self.max_pool3D(d3e,filter_size = 2,stride = 2)
+#         d4e = self.downconv(m3e,256, name = "layer4")
+#         m4e = self.max_pool3D(d4e,filter_size =2,stride=2)
 
-        #model
-        modele = tf.keras.Model(inputs = [inputse],outputs = [m4e])
-        return modele
-client_unet = UNET3DClients(1)
+#         #model
+#         modele = tf.keras.Model(inputs = [inputse],outputs = [m4e])
+#         return modele
+# client_unet = UNET3DClients(1)
 
 #dice Coeff
 def dice_coef(y_true, y_pred, smooth=1.0):
@@ -557,7 +557,7 @@ for epoch in range(epochs):
             # print('output------------>\n',output)
 
             if 'past_model' not in client_1:
-                pro3 = tf.zeros_like(pro1)
+                pro2 = tf.zeros_like(pro1)
                 past = tf.zeros_like(output)
                 # print('if pro3')
                 # print('pro3------------>\n',pro3)
@@ -565,12 +565,12 @@ for epoch in range(epochs):
             else:
                 # print('else pro3')
                 past_model = client_1['past_model']
-                pro3, past = past_model(image)
+                pro2, past = past_model(image)
                 # print('pro3------------>\n',pro3)
                 # print('past------------>\n',past)
 
             # cl, lrr = contrastive_loss(past,output,_,0.5,LR)
-            cl, lrr = contrastive_loss(pro3,pro1,pro2,0.5,LR)
+            cl, lrr = contrastive_loss(pro2,pro1,0.5,LR)
             # print('--------')
             # print(lrr)
             # LR=LR*lr/LR
@@ -819,61 +819,61 @@ class UNET3D(tf.keras.Model):
 
 unet_s = UNET3D(1)
 
-class UNET3DClients(tf.keras.Model):
-    def __init__(self,classes):
-        super(UNET3DClients,self).__init__()
-        self.classes = classes
+# class UNET3DClients(tf.keras.Model):
+#     def __init__(self,classes):
+#         super(UNET3DClients,self).__init__()
+#         self.classes = classes
 
-    #helper functions
-    def conv3D(self,x,
-               filters,
-               filter_size,
-               activation = 'relu',name = None):
-        out = tf.keras.layers.Conv3D(filters,(filter_size,filter_size,filter_size),padding = "same",name =name,use_bias = True)(x)
-        batch_norm_ = tf.keras.layers.BatchNormalization()(out)
-        conv_batch_norm_act = tf.keras.layers.Activation('relu')(batch_norm_)
-        return out
+#     #helper functions
+#     def conv3D(self,x,
+#                filters,
+#                filter_size,
+#                activation = 'relu',name = None):
+#         out = tf.keras.layers.Conv3D(filters,(filter_size,filter_size,filter_size),padding = "same",name =name,use_bias = True)(x)
+#         batch_norm_ = tf.keras.layers.BatchNormalization()(out)
+#         conv_batch_norm_act = tf.keras.layers.Activation('relu')(batch_norm_)
+#         return out
 
-    def upsampling3D(self,x,
-                     filters,
-                     filter_size,
-                     stride =2,
-                     activation = 'relu'):
-        up_out = tf.keras.layers.Conv3DTranspose(filters,(filter_size,filter_size,filter_size),strides = (stride,stride,stride),padding = 'same')(x)
-        batch_norm_ = tf.keras.layers.BatchNormalization()(up_out)
-        return batch_norm_
+#     def upsampling3D(self,x,
+#                      filters,
+#                      filter_size,
+#                      stride =2,
+#                      activation = 'relu'):
+#         up_out = tf.keras.layers.Conv3DTranspose(filters,(filter_size,filter_size,filter_size),strides = (stride,stride,stride),padding = 'same')(x)
+#         batch_norm_ = tf.keras.layers.BatchNormalization()(up_out)
+#         return batch_norm_
 
-    def concatenate(self,x1,x2):
-        concat = tf.keras.layers.concatenate([x1,x2])
-        return concat
+#     def concatenate(self,x1,x2):
+#         concat = tf.keras.layers.concatenate([x1,x2])
+#         return concat
 
-    def max_pool3D(self, x, filter_size,stride, name = None):
-        out = tf.keras.layers.MaxPooling3D((filter_size,filter_size,filter_size),strides = stride, name = name)(x)
-        return out
+#     def max_pool3D(self, x, filter_size,stride, name = None):
+#         out = tf.keras.layers.MaxPooling3D((filter_size,filter_size,filter_size),strides = stride, name = name)(x)
+#         return out
 
-    def downconv(self,x,filters,name = None):
-        s1 = self.conv3D(x,filters,3, name =name )
-        s2 = self.conv3D(s1,filters,3, name = name + "0")
-        return s2
+#     def downconv(self,x,filters,name = None):
+#         s1 = self.conv3D(x,filters,3, name =name )
+#         s2 = self.conv3D(s1,filters,3, name = name + "0")
+#         return s2
 
-    def call(self):
-        #input
-        # inputse = tf.keras.layers.Input(shape = (128,128,128,1))
-        inputse = tf.keras.layers.Input(shape = (64,64,64,1))
-        #encoder
-        d1e = self.downconv(inputse,32, name = "layer1")
-        m1e = self.max_pool3D(d1e,filter_size = 2,stride = 2)
-        d2e = self.downconv(m1e,64,  name = "layer2")
-        m2e = self.max_pool3D(d2e,filter_size = 2,stride = 2)
-        d3e = self.downconv(m2e,128, name = "layer3")
-        m3e = self.max_pool3D(d3e,filter_size = 2,stride = 2)
-        d4e = self.downconv(m3e,256, name = "layer4")
-        m4e = self.max_pool3D(d4e,filter_size =2,stride=2)
+#     def call(self):
+#         #input
+#         # inputse = tf.keras.layers.Input(shape = (128,128,128,1))
+#         inputse = tf.keras.layers.Input(shape = (64,64,64,1))
+#         #encoder
+#         d1e = self.downconv(inputse,32, name = "layer1")
+#         m1e = self.max_pool3D(d1e,filter_size = 2,stride = 2)
+#         d2e = self.downconv(m1e,64,  name = "layer2")
+#         m2e = self.max_pool3D(d2e,filter_size = 2,stride = 2)
+#         d3e = self.downconv(m2e,128, name = "layer3")
+#         m3e = self.max_pool3D(d3e,filter_size = 2,stride = 2)
+#         d4e = self.downconv(m3e,256, name = "layer4")
+#         m4e = self.max_pool3D(d4e,filter_size =2,stride=2)
 
-        #model
-        modele = tf.keras.Model(inputs = [inputse],outputs = [m4e])
-        return modele
-client_unet = UNET3DClients(1)
+#         #model
+#         modele = tf.keras.Model(inputs = [inputse],outputs = [m4e])
+#         return modele
+# client_unet = UNET3DClients(1)
 
 #dice Coeff
 def dice_coef(y_true, y_pred, smooth=1.0):
@@ -1196,24 +1196,6 @@ print("Loss: {} , Dice Coeff: {}\n\n, Precision: {} Sensitivity: {} \n\n Specifi
         loss = DiceLoss()
         model.compile('SGD', loss=loss)
     """
-
-# def contrastive_loss(z_prev,z_present,z_serv,margin = 0.2, lr=1e-3):
-#     #  z_prev = multivariate_norm(z_prev, z_serv)
-#     #  z_present = multivariate_norm(z_present, z_serv)
-#     # print(z_serv)
-#      z_prev = tf.math.l2_normalize(z_prev)
-#      z_present = tf.math.l2_normalize(z_present)
-#      dis = tf.sqrt(tf.reduce_sum(tf.square(z_present - z_prev)))
-#      dis = tf.sqrt(tf.math.maximum(dis, tf.keras.backend.epsilon())) # tf.keras.backend.epsilon()==1e-07
-#      sqpres = tf.math.square(z_present)
-#      sqMar = tf.math.square(tf.math.maximum(margin - z_present,0))
-#      loss = tf.math.reduce_mean(z_prev*sqpres + (1-z_prev)*sqMar)
-#      loss = loss - (loss*lr)
-#      lr = triplate_mean_lr(z_prev,z_present,z_serv,lr)
-#      srv = tf.sqrt(tf.reduce_sum(tf.square(z_serv)))
-#      #srv = tf.math.l2_normalize(srv)
-#      srv = tf.math.log(srv)
-#      return loss/srv
 
 plt.figure(figsize=(15, 5 * len(image_files)))
 
