@@ -12,6 +12,8 @@ The Maskvariate introduces a novel approach for contrastive loss along with it c
 
 ## Getting Started
 
+run main_maskvariate_loss file
+
 ### Prerequisites
 - Python 3.12.0
 - TensorFlow 2.12.0
